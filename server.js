@@ -127,12 +127,14 @@ function getRoom(roomId) {
   if (!rooms[roomId]) {
     rooms[roomId] = {
       id: roomId,
-      phase: "lobby",       // lobby | countdown | question | revive | result
+      phase: "lobby",
       players: [],
       usedQuestionIds: new Set(),
       currentPlayer: null,
+      lastPlayerName: null,   // 직전 턴 플레이어 (다음 턴 제외)
       currentQuestion: null,
       turnCount: 0,
+      maxTurns: 0,            // 게임 시작 시 players.length * 2 로 설정
       log: [],
       timer: null,
       timerStart: null,
@@ -168,7 +170,7 @@ function stateFor(room) {
       ? { question: room.currentQuestion.question }
       : null,
     turnCount: room.turnCount,
-    maxTurns: MAX_PLAYERS,  // = player count turns (max 8 per round, 2 rounds = 16)
+    maxTurns: room.maxTurns,
     log: room.log.slice(-20),
     timerStart: room.timerStart,
     timeLimit: TIME_LIMIT,
@@ -191,11 +193,16 @@ function startNextTurn(io, roomId) {
   const alive = room.players.filter(p => p.status === "alive");
 
   if (alive.length === 0) { endGame(io, roomId, "전원 탈락!"); return; }
-  if (room.turnCount >= MAX_TURNS) { endGame(io, roomId, `${MAX_TURNS}턴 종료!`); return; }
+  if (room.turnCount >= room.maxTurns) { endGame(io, roomId, `${room.maxTurns}턴 종료!`); return; }
+
+  // 직전 플레이어 제외 (2명 이상일 때만)
+  let candidates = alive.filter(p => p.name !== room.lastPlayerName);
+  if (candidates.length === 0) candidates = alive; // 1명만 살아있으면 예외
 
   room.turnCount++;
   room.phase = "question";
-  room.currentPlayer = rand(alive);
+  room.currentPlayer = rand(candidates);
+  room.lastPlayerName = room.currentPlayer.name;
   room.currentQuestion = pickQuestion(room);
   room.timerStart = Date.now();
 
@@ -273,6 +280,8 @@ function resetRoom(io, roomId) {
   });
   room.usedQuestionIds = new Set();
   room.turnCount = 0;
+  room.maxTurns = 0;
+  room.lastPlayerName = null;
   room.log = [];
   room.currentPlayer = null;
   room.currentQuestion = null;
@@ -316,6 +325,8 @@ function initSocket(io) {
       room.players.forEach(p => { p.status = "alive"; p.survived = 0; p.deaths = 0; p.saves = 0; });
       room.usedQuestionIds = new Set();
       room.turnCount = 0;
+      room.maxTurns = room.players.length * 2;
+      room.lastPlayerName = null;
       room.log = [];
       startNextTurn(io, String(roomId));
     });
@@ -337,7 +348,7 @@ function initSocket(io) {
 
     socket.on("kick", ({ roomId, name }) => {
       const room = rooms[String(roomId)];
-      if (!room || room.phase !== "lobby") return;
+      if (!room) return;
       room.players = room.players.filter(p => p.name !== name);
       broadcast(io, String(roomId));
     });

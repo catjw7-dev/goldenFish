@@ -329,28 +329,19 @@ export default function RoomPage() {
   const [gs, setGs] = useState(null);
   const [myName, setMyName] = useState('');
 
-useEffect(() => {
-  if (!socket || !roomId) return;
-  
-  const handleUnload = () => {
-    socket?.emit('kick', { roomId, name: myName });
-  };
-  window.addEventListener('beforeunload', handleUnload);
-  socket.on('state', setGs);
-  socket.on('error', msg => alert(msg));
+  useEffect(() => {
+    if (!socket || !roomId) return;
+    socket.on('state', setGs);
+    socket.on('error', msg => alert(msg));
 
-  const saved = sessionStorage.getItem(`gf_name_${roomId}`);
-  if (saved) {
-    setMyName(saved);
-    socket.emit('join', { roomId, name: saved });
-  }
+    const saved = sessionStorage.getItem(`gf_name_${roomId}`);
+    if (saved) {
+      setMyName(saved);
+      socket.emit('join', { roomId, name: saved });
+    }
 
-  return () => {
-    socket.off('state', setGs);
-    socket.off('error');
-    window.removeEventListener('beforeunload', handleUnload); // ← 이거 추가
-  };
-}, [socket, roomId]);
+    return () => { socket.off('state', setGs); socket.off('error'); };
+  }, [socket, roomId]);
 
   const join = useCallback((name) => {
     if (!socket || !roomId) return;
