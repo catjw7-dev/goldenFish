@@ -203,7 +203,7 @@ function startNextTurn(io, roomId) {
 
   room.timer = setTimeout(() => {
     processAnswer(io, roomId, null);
-  }, TIME_LIMIT * 1000 + 300);
+  }, TIME_LIMIT * 1000 + 3000);
 }
 
 function processAnswer(io, roomId, answer) {
