@@ -331,6 +331,10 @@ export default function RoomPage() {
 
   useEffect(() => {
     if (!socket || !roomId) return;
+      const handleUnload = () => {
+      socket?.emit('kick', { roomId, name: myName });
+      };
+    window.addEventListener('beforeunload', handleUnload);
     socket.on('state', setGs);
     socket.on('error', msg => alert(msg));
 
