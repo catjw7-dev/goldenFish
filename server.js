@@ -27,7 +27,7 @@ const DEFAULT_QUESTIONS = [
   { question: "진주는 시 일까 군 일까?", answer: "시"},
   { question: "논개가 몸을 던진 장소로 알려진 바위의 이름은?", answer: "의암"},
   { question: "진주성 안에서 남강을 바라볼 수 있는 유명한 누각은?", answer: "촉석루"},
-  { question: "임진왜란때 진주에서 일어난 큰 전투는?", answer: "진주대첩"}
+  { question: "임진왜란때 진주에서 일어난 큰 전투는?", answer: "진주대첩"},
   { question: "진주성을 만든 나라는?", answer: "고려"}
 ];
 
