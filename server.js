@@ -18,8 +18,17 @@ const TIME_LIMIT = 6; // seconds per question
    DEFAULT 100 QUESTIONS
 ═══════════════════════════════════════════════════ */
 const DEFAULT_QUESTIONS = [
-  { question: "test1", answer: "1234"},
-  { question:"test2" , answer : "1234"}
+  //진주에 관한것
+  { question: "진주의 마스코트는?", answer: "하모"},
+  { question:"임진왜란때 진주대첩이 일어난 성은?", answer : "진주성"},
+  { question: "진주가 속한 도는 어디일까요?", answer: "경상남도"},
+  { question: "진주 유등축제는 주로 어느 계절에 열릴까?", answer: "가을"},
+  { question: "진주성은 ㅁㅁ을 끼고 지어졌다. 이때 ㅁㅁ는? (힌트 : ㅁ강)", answer: "남강"},
+  { question: "진주는 시 일까 군 일까?", answer: "시"},
+  { question: "논개가 몸을 던진 장소로 알려진 바위의 이름은?", answer: "의암"},
+  { question: "진주성 안에서 남강을 바라볼 수 있는 유명한 누각은?", answer: "촉석루"},
+  { question: "임진왜란때 진주에서 일어난 큰 전투는?", answer: "진주대첩"}
+  { question: "진주성을 만든 나라는?", answer: "고려"}
 ];
 
 /* ═══════════════════════════════════════════════════
